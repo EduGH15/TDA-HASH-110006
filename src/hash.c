@@ -136,16 +136,59 @@ hash_t *hash_insertar(hash_t *hash, const char *clave, void *elemento,
     return hash;
 }
 
-void *hash_quitar(hash_t *hash, const char *clave)
-{
-    if (!hash)
+void *hash_quitar(hash_t *hash, const char *clave) {
+    // Verificar parámetros de entrada
+    if (hash == NULL || clave == NULL) {
         return NULL;
+    }
 
+    // Verificar si la clave está presente en el hash
+    if (!hash_contiene(hash, clave)) {
+        return NULL;  // La clave no está en el hash
+    }
+
+    // Calcular la posición en el vector interno del hash
+    size_t posicion = funcion_hash(clave) % hash->capacidad;
+
+    // Buscar y quitar el elemento en la lista vinculada correspondiente
+    nodo_t *nodo_actual = hash->vector[posicion];
+    nodo_t *nodo_anterior = NULL;
+
+    while (nodo_actual != NULL) {
+        if (strcmp(nodo_actual->clave, clave) == 0) {
+            // Elemento encontrado, quitarlo de la lista
+            if (nodo_anterior == NULL) {
+                // El elemento está al principio de la lista
+                hash->vector[posicion] = nodo_actual->siguiente;
+            } else {
+                // El elemento está en medio o al final de la lista
+                nodo_anterior->siguiente = nodo_actual->siguiente;
+            }
+
+            void *valor_eliminado = nodo_actual->valor;
+
+            // Liberar memoria del nodo
+            free(nodo_actual->clave);
+            free(nodo_actual);
+
+            // Decrementar la cantidad en el hash
+            hash->cantidad--;
+
+            return valor_eliminado;
+        }
+
+        // Moverse al siguiente nodo
+        nodo_anterior = nodo_actual;
+        nodo_actual = nodo_actual->siguiente;
+    }
+
+    // Este punto no debería alcanzarse debido a la verificación inicial con hash_contiene
     return NULL;
 }
 
+
 void *hash_obtener(hash_t *hash, const char *clave) {
-    if (!hash)
+    if (hash == NULL || clave == NULL)
         return NULL;
 
     size_t posicion = funcion_hash(clave) % hash->capacidad;
