@@ -112,6 +112,9 @@ hash_t *hash_insertar(hash_t *hash, const char *clave, void *elemento,
 	if(hash->vector[posicion] == NULL){
 		nodo_t* nodo = nodo_crear(clave, elemento);
 		hash->vector[posicion] = nodo;
+        if(anterior != NULL){
+            *anterior = NULL;
+        }
         hash->cantidad++;
 		return hash;
 	}
