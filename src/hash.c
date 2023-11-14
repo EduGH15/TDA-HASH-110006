@@ -137,52 +137,39 @@ hash_t *hash_insertar(hash_t *hash, const char *clave, void *elemento,
 }
 
 void *hash_quitar(hash_t *hash, const char *clave) {
-    // Verificar parámetros de entrada
     if (hash == NULL || clave == NULL) {
         return NULL;
     }
 
-    // Verificar si la clave está presente en el hash
     if (!hash_contiene(hash, clave)) {
-        return NULL;  // La clave no está en el hash
+        return NULL;  
     }
 
-    // Calcular la posición en el vector interno del hash
     size_t posicion = funcion_hash(clave) % hash->capacidad;
 
-    // Buscar y quitar el elemento en la lista vinculada correspondiente
     nodo_t *nodo_actual = hash->vector[posicion];
     nodo_t *nodo_anterior = NULL;
 
     while (nodo_actual != NULL) {
         if (strcmp(nodo_actual->clave, clave) == 0) {
-            // Elemento encontrado, quitarlo de la lista
             if (nodo_anterior == NULL) {
-                // El elemento está al principio de la lista
                 hash->vector[posicion] = nodo_actual->siguiente;
             } else {
-                // El elemento está en medio o al final de la lista
                 nodo_anterior->siguiente = nodo_actual->siguiente;
             }
 
             void *valor_eliminado = nodo_actual->valor;
-
-            // Liberar memoria del nodo
             free(nodo_actual->clave);
             free(nodo_actual);
-
-            // Decrementar la cantidad en el hash
             hash->cantidad--;
 
             return valor_eliminado;
         }
 
-        // Moverse al siguiente nodo
         nodo_anterior = nodo_actual;
         nodo_actual = nodo_actual->siguiente;
     }
 
-    // Este punto no debería alcanzarse debido a la verificación inicial con hash_contiene
     return NULL;
 }
 
@@ -230,31 +217,6 @@ size_t hash_cantidad(hash_t *hash)
     return hash->cantidad;
 }
 
-/*
-void hash_destruir_todo(hash_t *hash, void (*destructor)(void *)) {
-    if (!hash) {
-        return;
-    }
-
-    for (size_t i = 0; i < hash->capacidad; i++) {
-        nodo_t *actual = hash->vector[i];
-        while (actual != NULL) {
-            nodo_t *aux = actual;
-            actual = actual->siguiente;
-
-            if (destructor != NULL) {
-                destructor(aux->valor);
-            }
-            free(aux->clave);
-            free(aux);
-        }
-    }
-
-    free(hash->vector);
-    free(hash);
-}
-*/
-
 void hash_destruir(hash_t *hash)
 {
     hash_destruir_todo(hash, NULL);
@@ -293,8 +255,19 @@ size_t hash_con_cada_clave(hash_t *hash,
                void *aux)
 {
     size_t n = 0;
-    if (!hash || !f)
+    if (hash == NULL || f == NULL){
         return n;
-
+    }
+    bool seguir_recorriendo = true;
+    for(size_t posicion = 0; posicion < hash->capacidad; posicion++) {
+        nodo_t *nodo_actual = hash->vector[posicion];
+        while (nodo_actual != NULL && seguir_recorriendo) {
+            if (!f(nodo_actual->clave, nodo_actual->valor, aux)) {
+                seguir_recorriendo = false;
+            }
+            nodo_actual = nodo_actual->siguiente;
+            n++;
+        }
+    }
     return n;
 }
