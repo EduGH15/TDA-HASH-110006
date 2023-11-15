@@ -3,13 +3,13 @@
 #include "hash.h"
 
 #define FACTOR_CARGA_MAXIMO 0.7
+#define CAPACIDAD_MIN 3
 
 typedef struct nodo{
     char* clave;
     void* valor;
     struct  nodo* siguiente;    
 }nodo_t;
-
 
 struct hash{
     nodo_t** vector;
@@ -80,6 +80,9 @@ hash_t* reshash(hash_t *hash) {
 
 hash_t *hash_crear(size_t capacidad)
 {   
+    if(capacidad < CAPACIDAD_MIN){
+        capacidad = CAPACIDAD_MIN;
+    }
     hash_t* hash = calloc(1, sizeof(hash_t));
     if(hash == NULL)
         return NULL;
@@ -176,7 +179,6 @@ void *hash_quitar(hash_t *hash, const char *clave) {
     return NULL;
 }
 
-
 void *hash_obtener(hash_t *hash, const char *clave) {
     if (hash == NULL || clave == NULL)
         return NULL;
@@ -194,23 +196,11 @@ void *hash_obtener(hash_t *hash, const char *clave) {
     return NULL;
 }
 
-
-bool hash_contiene(hash_t *hash, const char *clave)
-{
+bool hash_contiene(hash_t *hash, const char *clave) {
     if (hash == NULL || clave == NULL)
-        return NULL;
+        return false;
 
-    size_t posicion = funcion_hash(clave) % hash->capacidad;
-    nodo_t *nodo_actual = hash->vector[posicion];
-
-    while (nodo_actual != NULL) {
-        if (strcmp(nodo_actual->clave, clave) == 0) {
-            return true;
-        }
-        nodo_actual = nodo_actual->siguiente;
-    }
-
-    return false;
+    return hash_obtener(hash, clave) != NULL;
 }
 
 size_t hash_cantidad(hash_t *hash)
@@ -251,7 +241,6 @@ void hash_destruir_todo(hash_t *hash, void (*destructor)(void *)) {
     free(hash->vector);
     free(hash);
 }
-
 
 size_t hash_con_cada_clave(hash_t *hash,
                bool (*f)(const char *clave, void *valor, void *aux),
