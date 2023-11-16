@@ -29,7 +29,7 @@ nodo_t *nodo_crear(const char *clave, void *elemento) {
 	strcpy(copia_clave, clave);
 
     nodo_t *nodo_nuevo = malloc(sizeof(nodo_t));
-    if (!nodo_nuevo) {
+    if (nodo_nuevo == NULL) {
         free(copia_clave);
         return NULL;
     }

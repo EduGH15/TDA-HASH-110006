@@ -1,5 +1,26 @@
+#include <stdlib.h>
 #include "pa2m.h"
 #include "src/hash.h"
+
+bool contar_elementos(const char *clave, void *valor, void *extra) {
+    if(extra != NULL){
+        int *contador = extra;
+        (*contador)++;
+    }
+    return true;
+}   
+
+bool contar_elementos_parcialmente(const char *clave, void *valor, void *extra) {
+
+        int *contador = extra;
+        (*contador)++;
+
+        if(*contador == 3){
+            return false;
+        }
+    
+    return true;
+}   
 
 void se_puede_crear_hash_con_capacidad_mayor_y_menor_a_tres() {
     hash_t* hash_1 = hash_crear(5);
@@ -82,35 +103,60 @@ void se_puede_obtener_elementos_del_hash(){
 	hash_t *hash = NULL;
     pa2m_afirmar(hash_obtener(hash, "clave") == NULL, "No se puede obtener elementos de un hash nulo");
 
+    hash = hash_crear(3);
+    pa2m_afirmar(hash_obtener(hash, NULL) == NULL, "No se puede obtener con clave nula en un hash válido");
+
+    pa2m_afirmar(hash_obtener(hash, "A") == NULL, "No se puede obtener una clave que no se encuentra en el hash");
+
+    int valor = 42;
+    pa2m_afirmar(hash_insertar(hash, "A", &valor, NULL) == hash, "Se insertó elemento con clave 'A'");
+
+    void *elemento = hash_obtener(hash, "A");
+    pa2m_afirmar(elemento != NULL && elemento == &valor, "Se obtuvo elemento con clave 'A' que sí se encuentra en el hash");
+
+     pa2m_afirmar(hash_quitar(hash, "A") != NULL, "Se quitó el elemento con clave 'A' que sí se encuentraba en el hash");
+
+    pa2m_afirmar(hash_obtener(hash, "A") == NULL, "Ya no se encuentra la clave 'A' en el hash");
+
+
 	hash_destruir(hash);
 }
-/*
-### 2.4 Obtención
 
--   [ ] Se prueba obtener de un hash nulo
--   [ ] Se prueba obtener una clave nula
--   [ ] Se prueba obtener una clave que no se encuentra en el hash
--   [ ] Se prueba obtener una clave que sí se encuentra en el hash
--   [ ] Se prueba obtener una calve que sí se encuentra en el hash, quitarla, y luego verificar que ya no se encuentra
+void el_hash_contiene_la_cantidad_correcta(){
+    hash_t *hash = NULL;
+    pa2m_afirmar(hash_cantidad(hash) == 0, "Un hash nulo no contiene claves");
 
+    hash = hash_crear(3);
 
-### 2.5 Contener
+    int valor = 42;
+    pa2m_afirmar(hash_insertar(hash, "A", &valor, NULL) == hash, "Se insertó elemento con clave 'A'");
+    pa2m_afirmar(hash_cantidad(hash) == 1, "La cantidad de claves presentes en un hash no nulo es correcta");
 
--   [ ] Se prueba obtener la cantidad de elementos de un hash nulo
--   [ ] Se prueba obtener la cantidad de elementos de un hash no nulo
+    hash_destruir(hash);
+}
 
+void prueba_iterar_hash() {
+    hash_t *hash = NULL;
+    int contador = 0;
+    
+    pa2m_afirmar(hash_con_cada_clave(hash,  contar_elementos, &contador) == 0, "No se puede iterar un hash nulo");
 
-### 2.6 Iterador interno
+    const char claves[6] = {'A', 'B', 'C', 'D', 'E', 'F'};
+    char valores[6] = {1, 2, 3, 4, 5, 6};
+    hash = hash_crear(6);
 
--   [ ] Se prueba iterar un hash nulo
--   [ ] Se prueba iterar un hash válido con una función nula
--   [ ] Se prueba iterar un hash con un auxiliar nulo
--   [ ] Se prueba iterar un hash en su totalidad
--   [ ] Se prueba iterar un hash deteniéndose antes de terminar de visitar todos los elementos
- 
+    pa2m_afirmar(hash_con_cada_clave(hash,  NULL, &contador) == 0, "No se puede iterar con una función nula");
 
-*/
+    for(size_t i = 0; i < 6; i++){
+        hash_insertar(hash, &claves[i], &valores[i], NULL);
+    }
 
+    contador = 0;
+    pa2m_afirmar(hash_con_cada_clave(hash, contar_elementos, NULL) == 6, "Se puede iterar con un auxiiar nulo y en su totalidad");
+    pa2m_afirmar(hash_con_cada_clave(hash, contar_elementos_parcialmente, &contador) == 3, "Se puede iterar parcialmente el hash");
+
+    hash_destruir(hash);
+}
 
 int main()
 {
@@ -127,6 +173,18 @@ int main()
 	pa2m_nuevo_grupo(
 		"\n======================== Prueba de Eliminación ========================");
 	se_puede_quitar_elemento();
+
+    pa2m_nuevo_grupo(
+		"\n======================== Prueba de Obtención ========================");
+    se_puede_obtener_elementos_del_hash();
+
+    pa2m_nuevo_grupo(
+		"\n======================== Prueba de Cantidad ========================");
+    el_hash_contiene_la_cantidad_correcta();
+
+    pa2m_nuevo_grupo(
+		"\n======================== Prueba de iterador interno ========================");
+    prueba_iterar_hash();
 
 	return pa2m_mostrar_reporte();
 }
