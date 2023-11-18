@@ -141,17 +141,16 @@ void prueba_iterar_hash() {
     
     pa2m_afirmar(hash_con_cada_clave(hash,  contar_elementos, &contador) == 0, "No se puede iterar un hash nulo");
 
-    const char claves[6] = {'A', 'B', 'C', 'D', 'E', 'F'};
+    const char claves[] = {'A', 0, 'B', 0, 'C', 0,'D', 0, 'E', 0, 'F', 0};
     char valores[6] = {1, 2, 3, 4, 5, 6};
     hash = hash_crear(6);
 
     pa2m_afirmar(hash_con_cada_clave(hash,  NULL, &contador) == 0, "No se puede iterar con una función nula");
 
     for(size_t i = 0; i < 6; i++){
-        hash_insertar(hash, &claves[i], &valores[i], NULL);
+        hash_insertar(hash, &claves[2 * i], &valores[i], NULL);
     }
-
-    contador = 0;
+    
     pa2m_afirmar(hash_con_cada_clave(hash, contar_elementos, NULL) == 6, "Se puede iterar con un auxiiar nulo y en su totalidad");
     pa2m_afirmar(hash_con_cada_clave(hash, contar_elementos_parcialmente, &contador) == 3, "Se puede iterar parcialmente el hash");
 
