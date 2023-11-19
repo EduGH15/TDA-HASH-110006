@@ -80,7 +80,7 @@ Zona de desborde: se utiliza una zona de desborde o tabla separada para almacena
 
 <h2>Creación del hash</h2>
 
-Esta función crea una nueva tabla de hash. Primero, verifica que la capacidad mínima no sea superada y, después, reserva la memoria necesaria para la tabla y su vector interno. Si todo sale bien, se obtiene una tabla de hash lista para usar; si algo falla, devuelve NULL,
+Esta función crea una nueva tabla de hash. Primero, verifica que la capacidad sea 3 como mínimo y, después, reserva la memoria necesaria para la tabla y su vector interno. Si todo sale bien, se obtiene una tabla de hash lista para usar; si algo falla, devuelve NULL,
 
 <div align="center">
 <img width="70%" src="img/hash_crear().png">
