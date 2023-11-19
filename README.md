@@ -88,7 +88,7 @@ Esta función crea una nueva tabla de hash. Primero, verifica que la capacidad m
 
 <h2>Inserción</h2>
 
- Primero, se verifica si la tabla y la clave son válidas. Luego, se calcula la carga actual de la tabla y, si supera un cierto umbral, se realiza una rehash. 
+ Primero, se verifica si la tabla y la clave son válidas. Luego, se calcula la carga actual de la tabla y, si supera un cierto umbral, se realiza una rehash (Dejamos abajo una figura de como funciona el rehash).
  
  <div align="center">
 <img width="70%" src="img/rehash().png">
@@ -122,7 +122,7 @@ Se actualizan los punteros para eliminar el nodo encontrado, y se libera la memo
 
 <h2>Obtención</h2>
 
-La función determina la posición en la tabla mediante la función de hash y recorre los nodos enlazados correspondientes a esa posición. Si encuentra un nodo cuya clave coincide con la clave buscada, la función devuelve el valor asociado a esa clave. Si llega al final de la lista sin encontrar la clave, devuelve NULL. 
+La función determina la posición en la tabla mediante la función de hash y recorre los nodos enlazados correspondientes a esa posición. Si encuentra un nodo cuya clave coincide con la clave buscada, la función devuelve el valor asociado a esa clave. Si llega al final de la lista sin encontrar la clave, devuelve NULL. La figura de abajo muestra como se recorren los nodos paso a paso. 
 
 <div align="center">
 <img width="70%" src="img/hash_obtener().png">
