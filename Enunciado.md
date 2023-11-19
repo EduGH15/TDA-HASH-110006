@@ -32,7 +32,7 @@ En general para todo el código: utilice nombres claros de variables y funciones
 
 Explicá teóricamente (y por favor usando diagramas):
 
-   - Qué es un diccionario
+   - Qué es un dic
    - Qué es una función de hash y qué características debe tener
    - Qué es una tabla de Hash y los diferentes métodos de resolución de colisiones vistos (encadenamiento, probing, zona de desborde)
 
